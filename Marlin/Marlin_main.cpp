@@ -119,6 +119,7 @@
 // M109 - Sxxx Wait for extruder current temp to reach target temp. Waits only when heating
 //        Rxxx Wait for extruder current temp to reach target temp. Waits when heating and cooling
 //        IF AUTOTEMP is enabled, S<mintemp> B<maxtemp> F<factor>. Exit autotemp by any M109 without F
+// M112 - Emergency stop
 // M114 - Output current position to serial port
 // M115 - Capabilities string
 // M117 - display message
@@ -274,6 +275,8 @@ int EtoPPressure=0;
   float delta_diagonal_rod_2= sq(delta_diagonal_rod);
   float delta_segments_per_second= DELTA_SEGMENTS_PER_SECOND;
 #endif					
+
+bool cancel_heatup = false ;
 
 //===========================================================================
 //=============================Private Variables=============================
@@ -673,6 +676,11 @@ void get_command()
           }
 
         }
+
+        //If command was e-stop process now
+        if(strcmp(cmdbuffer[bufindw], "M112") == 0)
+          kill();
+        
         bufindw = (bufindw + 1)%BUFSIZE;
         buflen += 1;
       }
@@ -1177,19 +1185,21 @@ void process_commands()
         //ClearToSend();
         return;
       }
-      //break;
+      break;
     case 2: // G2  - CW ARC
       if(Stopped == false) {
         get_arc_coordinates();
         prepare_arc_move(true);
         return;
       }
+      break;
     case 3: // G3  - CCW ARC
       if(Stopped == false) {
         get_arc_coordinates();
         prepare_arc_move(false);
         return;
       }
+      break;
     case 4: // G4 dwell
       LCD_MESSAGEPGM(MSG_DWELL);
       codenum = 0;
@@ -1797,7 +1807,7 @@ void process_commands()
         int pin_number = LED_PIN;
         if (code_seen('P') && pin_status >= 0 && pin_status <= 255)
           pin_number = code_value();
-        for(int8_t i = 0; i < (int8_t)sizeof(sensitive_pins); i++)
+        for(int8_t i = 0; i < (int8_t)(sizeof(sensitive_pins)/sizeof(int)); i++)
         {
           if (sensitive_pins[i] == pin_number)
           {
@@ -1827,6 +1837,9 @@ void process_commands()
         setTargetHotend1(code_value() == 0.0 ? 0.0 : code_value() + duplicate_extruder_temp_offset);
 #endif
       setWatch();
+      break;
+    case 112: //  M112 -Emergency Stop
+      kill();
       break;
     case 140: // M140 set bed temp
       if (code_seen('S')) setTargetBed(code_value());
@@ -1934,14 +1947,16 @@ void process_commands()
 
       /* See if we are heating up or cooling down */
       target_direction = isHeatingHotend(tmp_extruder); // true if heating, false if cooling
+      
+      cancel_heatup = false;
 
       #ifdef TEMP_RESIDENCY_TIME
         long residencyStart;
         residencyStart = -1;
         /* continue to loop until we have reached the target temp
           _and_ until TEMP_RESIDENCY_TIME hasn't passed since we reached it */
-        while((residencyStart == -1) ||
-              (residencyStart >= 0 && (((unsigned int) (millis() - residencyStart)) < (TEMP_RESIDENCY_TIME * 1000UL))) ) {
+        while((!cancel_heatup)&&((residencyStart == -1) ||
+              (residencyStart >= 0 && (((unsigned int) (millis() - residencyStart)) < (TEMP_RESIDENCY_TIME * 1000UL)))) ) {
       #else
         while ( target_direction ? (isHeatingHotend(tmp_extruder)) : (isCoolingHotend(tmp_extruder)&&(CooldownNoWait==false)) ) {
       #endif //TEMP_RESIDENCY_TIME
@@ -1997,10 +2012,11 @@ void process_commands()
           CooldownNoWait = false;
         }
         codenum = millis();
-
+        
+        cancel_heatup = false;
         target_direction = isHeatingBed(); // true if heating, false if cooling
 
-        while ( target_direction ? (isHeatingBed()) : (isCoolingBed()&&(CooldownNoWait==false)) )
+        while ( (target_direction)&&(!cancel_heatup) ? (isHeatingBed()) : (isCoolingBed()&&(CooldownNoWait==false)) )
         {
           if(( millis() - codenum) > 1000 ) //Print Temp Reading every 1 second while heating up.
           {
@@ -2151,8 +2167,9 @@ void process_commands()
       }
       break;
     case 85: // M85
-      code_seen('S');
-      max_inactive_time = code_value() * 1000;
+      if(code_seen('S')) {
+        max_inactive_time = code_value() * 1000;
+      }
       break;
     case 92: // M92
       for(int8_t i=0; i < NUM_AXIS; i++)
@@ -2273,6 +2290,7 @@ void process_commands()
           if(tmp_extruder >= EXTRUDERS) {
             SERIAL_ECHO_START;
             SERIAL_ECHO(MSG_M200_INVALID_EXTRUDER);
+            break;
           }
         }
         volumetric_multiplier[tmp_extruder] = 1 / area;
@@ -2464,7 +2482,7 @@ void process_commands()
 
         if(pin_state >= -1 && pin_state <= 1){
 
-          for(int8_t i = 0; i < (int8_t)sizeof(sensitive_pins); i++)
+          for(int8_t i = 0; i < (int8_t)(sizeof(sensitive_pins)/sizeof(int)); i++)
           {
             if (sensitive_pins[i] == pin_number)
             {
@@ -3422,6 +3440,9 @@ void handle_status_leds(void) {
 
 void manage_inactivity()
 {
+  if(buflen < (BUFSIZE-1))
+    get_command();
+
   if( (millis() - previous_millis_cmd) >  max_inactive_time )
     if(max_inactive_time)
       kill();
