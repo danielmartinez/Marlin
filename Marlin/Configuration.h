@@ -31,11 +31,7 @@
 #define SERIAL_PORT 0
 
 // This determines the communication speed of the printer
-<<<<<<< HEAD
-#define BAUDRATE 115200
-=======
 #define BAUDRATE 250000
->>>>>>> 3dc9e478ad02b78f117b08422b7e86b7b63a4843
 
 // This enables the serial port associated to the Bluetooth interface
 //#define BTENABLED              // Enable BT interface on AT90USB devices
@@ -80,11 +76,8 @@
 // 91 = Final OMCA board
 // 301 = Rambo
 // 21 = Elefu Ra Board (v3)
-<<<<<<< HEAD
-=======
 // 88 = 5DPrint D8 Driver Board
 // 999 = Leapfrog
->>>>>>> 3dc9e478ad02b78f117b08422b7e86b7b63a4843
 
 #ifndef MOTHERBOARD
 #define MOTHERBOARD 62
@@ -158,35 +151,25 @@
 // 8 is 100k 0603 SMD Vishay NTCS0603E3104FXT (4.7k pullup)
 // 9 is 100k GE Sensing AL03006-58.2K-97-G1 (4.7k pullup)
 // 10 is 100k RS thermistor 198-961 (4.7k pullup)
-<<<<<<< HEAD
-// 60 is 100k Maker's Tool Works Kapton Bed Thermister
-=======
 // 11 is 100k beta 3950 1% thermistor (4.7k pullup)
 // 12 is 100k 0603 SMD Vishay NTCS0603E3104FXT (4.7k pullup) (calibrated for Makibox hot bed)
 // 13 is 100k Hisens 3950  1% up to 300°C for hotend "Simple ONE " & "Hotend "All In ONE" 
 // 20 is the PT100 circuit found in the Ultimainboard V2.x
 // 60 is 100k Maker's Tool Works Kapton Bed Thermistor beta=3950
->>>>>>> 3dc9e478ad02b78f117b08422b7e86b7b63a4843
 //
 //    1k ohm pullup tables - This is not normal, you would have to have changed out your 4.7k for 1k
 //                          (but gives greater accuracy and more stable PID)
 // 51 is 100k thermistor - EPCOS (1k pullup)
 // 52 is 200k thermistor - ATC Semitec 204GT-2 (1k pullup)
 // 55 is 100k thermistor - ATC Semitec 104GT-2 (Used in ParCan & J-Head) (1k pullup)
-<<<<<<< HEAD
-
-#define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 0
-=======
 //
 // 1047 is Pt1000 with 4k7 pullup
 // 1010 is Pt1000 with 1k pullup (non standard)
 // 147 is Pt100 with 4k7 pullup
 // 110 is Pt100 with 1k pullup (non standard)
 
-#define TEMP_SENSOR_0 -1
-#define TEMP_SENSOR_1 -1
->>>>>>> 3dc9e478ad02b78f117b08422b7e86b7b63a4843
+#define TEMP_SENSOR_0 1
+#define TEMP_SENSOR_1 0
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_BED 1
 
