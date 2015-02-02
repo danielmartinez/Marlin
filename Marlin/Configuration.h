@@ -197,9 +197,9 @@
 
 // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 // Ultimaker
-    #define  DEFAULT_Kp 49.82
-    #define  DEFAULT_Ki 3.86
-    #define  DEFAULT_Kd 160.79
+    #define  DEFAULT_Kp 19.26
+    #define  DEFAULT_Ki 1.26
+    #define  DEFAULT_Kd 73.78
 
 // MakerGear
 //    #define  DEFAULT_Kp 7.0
@@ -375,7 +375,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = true; // set to true to invert the logic of
 #define X_MIN_POS -26
 #define Y_MAX_POS 200
 #define Y_MIN_POS 0
-#define Z_MAX_POS 250
+#define Z_MAX_POS 248
 #define Z_MIN_POS 0
 
 #define X_MAX_LENGTH (X_MAX_POS - X_MIN_POS)
