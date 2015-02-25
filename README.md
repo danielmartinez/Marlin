@@ -1,5 +1,3 @@
-Here's my modification of the Marlin setup for Prusa Mendel I3 printer.
-
 # Marlin 3D Printer Firmware
 <img align="right" src="Documentation/Logo/Marlin%20Logo%20GitHub.png" />
 
