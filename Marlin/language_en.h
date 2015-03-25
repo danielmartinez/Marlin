@@ -95,6 +95,9 @@
 #ifndef MSG_MOVE_AXIS
 #define MSG_MOVE_AXIS                       "Move axis"
 #endif
+#ifndef MSG_LEVEL_BED
+#define MSG_LEVEL_BED                       "Level bed"
+#endif
 #ifndef MSG_MOVE_X
 #define MSG_MOVE_X                          "Move X"
 #endif
@@ -232,6 +235,9 @@
 #endif
 #ifndef MSG_A_RETRACT
 #define MSG_A_RETRACT                       "A-retract"
+#endif
+#ifndef MSG_A_TRAVEL
+#define MSG_A_TRAVEL                        "A-travel"
 #endif
 #ifndef MSG_XSTEPS
 #define MSG_XSTEPS                          "Xsteps/mm"
