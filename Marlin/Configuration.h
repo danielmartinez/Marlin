@@ -383,7 +383,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 // Travel limits after homing (units are in mm)
 #define X_MIN_POS -90
-#define Y_MIN_POS 90
+#define Y_MIN_POS -90
 #define Z_MIN_POS 0
 #define X_MAX_POS 90
 #define Y_MAX_POS 90
@@ -420,53 +420,27 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 //============================= Bed Auto Leveling ===========================
 //===========================================================================
 
-//#define ENABLE_AUTO_BED_LEVELING // Delete the comment to enable (remove // at the start of the line)
-#define Z_PROBE_REPEATABILITY_TEST  // If not commented out, Z-Probe Repeatability test will be included if Auto Bed Leveling is Enabled.
+#define ENABLE_AUTO_BED_LEVELING // Delete the comment to enable (remove // at the start of the line)
+// Z-Probe Repeatability test is not supported in Deltas yet.
 
 #ifdef ENABLE_AUTO_BED_LEVELING
 
-  // There are 2 different ways to specify probing locations
-  //
-  // - "grid" mode
-  //   Probe several points in a rectangular grid.
-  //   You specify the rectangle and the density of sample points.
-  //   This mode is preferred because there are more measurements.
-  //
-  // - "3-point" mode
-  //   Probe 3 arbitrary points on the bed (that aren't colinear)
-  //   You specify the XY coordinates of all 3 points.
-
-  // Enable this to sample the bed in a grid (least squares solution)
-  // Note: this feature generates 10KB extra code size
+  // Deltas only support grid mode
   #define AUTO_BED_LEVELING_GRID
 
-  #ifdef AUTO_BED_LEVELING_GRID
+  #define DELTA_PROBABLE_RADIUS 35
+  #define LEFT_PROBE_BED_POSITION -35
+  #define RIGHT_PROBE_BED_POSITION 35
+  #define BACK_PROBE_BED_POSITION 35
+  #define FRONT_PROBE_BED_POSITION -35
 
-    #define LEFT_PROBE_BED_POSITION 15
-    #define RIGHT_PROBE_BED_POSITION 170
-    #define FRONT_PROBE_BED_POSITION 20
-    #define BACK_PROBE_BED_POSITION 170
-    
-    #define MIN_PROBE_EDGE 10 // The probe square sides can be no smaller than this
+  #define MIN_PROBE_EDGE 10 // The probe square sides can be no smaller than this
 
-    // Set the number of grid points per dimension
-    // You probably don't need more than 3 (squared=9)
-    #define AUTO_BED_LEVELING_GRID_POINTS 2
-
-
-  #else  // !AUTO_BED_LEVELING_GRID
-
-      // Arbitrary points to probe. A simple cross-product
-      // is used to estimate the plane of the bed.
-      #define ABL_PROBE_PT_1_X 15
-      #define ABL_PROBE_PT_1_Y 180
-      #define ABL_PROBE_PT_2_X 15
-      #define ABL_PROBE_PT_2_Y 20
-      #define ABL_PROBE_PT_3_X 170
-      #define ABL_PROBE_PT_3_Y 20
-
-  #endif // AUTO_BED_LEVELING_GRID
-
+  // Non-linear bed leveling will be used.
+  // Compensate by interpolating between the nearest four Z probe values for each point.
+  // Useful for deltas where the print surface may appear like a bowl or dome shape.
+  // Works best with ACCURATE_BED_LEVELING_POINTS 5 or higher.
+  #define AUTO_BED_LEVELING_GRID_POINTS 2
 
   // Offsets to the probe relative to the extruder tip (Hotend - Probe)
   // X and Y offsets must be integers
@@ -517,8 +491,8 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 
 // The position of the homing switches
-//#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
-//#define BED_CENTER_AT_0_0  // If defined, the center of the bed is at (X=0, Y=0)
+#define MANUAL_HOME_POSITIONS  // If defined, MANUAL_*_HOME_POS below will be used
+#define BED_CENTER_AT_0_0  // If defined, the center of the bed is at (X=0, Y=0)
 
 // Manual homing switch locations:
 // For deltabots this means top and center of the Cartesian print volume.
