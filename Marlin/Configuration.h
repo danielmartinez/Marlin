@@ -125,6 +125,9 @@ Here are some standard links for getting your machine calibrated:
 // Effective horizontal distance bridged by diagonal push rods.
 #define DELTA_RADIUS (DELTA_SMOOTH_ROD_OFFSET-DELTA_EFFECTOR_OFFSET-DELTA_CARRIAGE_OFFSET)
 
+// Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
+#define DELTA_PRINTABLE_RADIUS 90
+
 //===========================================================================
 //============================= Thermal Settings ============================
 //===========================================================================
@@ -411,11 +414,11 @@ const bool Z_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the logic
 // @section machine
 
 // Travel limits after homing (units are in mm)
-#define X_MIN_POS -90
-#define Y_MIN_POS -90
+#define X_MIN_POS -DELTA_PRINTABLE_RADIUS
+#define Y_MIN_POS -DELTA_PRINTABLE_RADIUS
 #define Z_MIN_POS 0
-#define X_MAX_POS 90
-#define Y_MAX_POS 90
+#define X_MAX_POS DELTA_PRINTABLE_RADIUS
+#define Y_MAX_POS DELTA_PRINTABLE_RADIUS
 #define Z_MAX_POS MANUAL_Z_HOME_POS
 
 //===========================================================================
@@ -458,8 +461,8 @@ const bool Z_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the logic
 
 // @section bedlevel
 
-//#define ENABLE_AUTO_BED_LEVELING // Delete the comment to enable (remove // at the start of the line)
-#define Z_PROBE_REPEATABILITY_TEST  // If not commented out, Z-Probe Repeatability test will be included if Auto Bed Leveling is Enabled.
+#define ENABLE_AUTO_BED_LEVELING // Delete the comment to enable (remove // at the start of the line)
+//#define Z_PROBE_REPEATABILITY_TEST  // If not commented out, Z-Probe Repeatability test will be included if Auto Bed Leveling is Enabled.
 
 #ifdef ENABLE_AUTO_BED_LEVELING
 
@@ -468,16 +471,20 @@ const bool Z_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the logic
 
   #ifdef AUTO_BED_LEVELING_GRID
 
-    #define LEFT_PROBE_BED_POSITION 15
-    #define RIGHT_PROBE_BED_POSITION 170
-    #define FRONT_PROBE_BED_POSITION 20
-    #define BACK_PROBE_BED_POSITION 170
+    #define DELTA_PROBABLE_RADIUS (DELTA_PRINTABLE_RADIUS - 10)
+
+    #define LEFT_PROBE_BED_POSITION -DELTA_PROBABLE_RADIUS
+    #define RIGHT_PROBE_BED_POSITION DELTA_PROBABLE_RADIUS
+    #define FRONT_PROBE_BED_POSITION -DELTA_PROBABLE_RADIUS
+    #define BACK_PROBE_BED_POSITION DELTA_PROBABLE_RADIUS
 
     #define MIN_PROBE_EDGE 10 // The probe square sides can be no smaller than this
 
-    // Set the number of grid points per dimension
-    // You probably don't need more than 3 (squared=9)
-    #define AUTO_BED_LEVELING_GRID_POINTS 2
+    // Non-linear bed leveling will be used.
+    // Compensate by interpolating between the nearest four Z probe values for each point.
+    // Useful for deltas where the print surface may appear like a bowl or dome shape.
+    // Works best with ACCURATE_BED_LEVELING_POINTS 5 or higher.
+    #define AUTO_BED_LEVELING_GRID_POINTS 3
 
   #else  // !AUTO_BED_LEVELING_GRID
 
