@@ -478,7 +478,7 @@ const bool Z_PROBE_ENDSTOP_INVERTING = false; // set to true to invert the logic
 
   // Offsets to the probe relative to the extruder tip (Hotend - Probe)
   // X and Y offsets must be integers
-  #define X_PROBE_OFFSET_FROM_EXTRUDER -61     // Probe on: -left  +right
+  #define X_PROBE_OFFSET_FROM_EXTRUDER  61     // Probe on: -left  +right
   #define Y_PROBE_OFFSET_FROM_EXTRUDER   0     // Probe on: -front +behind
   #define Z_PROBE_OFFSET_FROM_EXTRUDER  -1.40  // -below (always!)
 
