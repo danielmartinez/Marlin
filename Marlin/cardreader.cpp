@@ -23,7 +23,7 @@ CardReader::CardReader()
    memset(workDirParents, 0, sizeof(workDirParents));
 
    autostart_stilltocheck=true; //the SD start is delayed, because otherwise the serial cannot answer fast enough to make contact with the host software.
-   autostart_index=0;
+   lastnr=0;
   //power to SD reader
   #if SDPOWER > -1
     SET_OUTPUT(SDPOWER); 
@@ -60,12 +60,12 @@ void CardReader::lsDive(const char *prepend, SdFile parent, const char * const m
     if( DIR_IS_SUBDIR(&p) && lsAction!=LS_Count && lsAction!=LS_GetFilename) // hence LS_SerialPrint
     {
 
-      char path[FILENAME_LENGTH*2];
-      char lfilename[FILENAME_LENGTH];
+      char path[13*2];
+      char lfilename[13];
       createFilename(lfilename,p);
       
       path[0]=0;
-      if(prepend[0]==0) //avoid leading / if already in prepend
+      if(strlen(prepend)==0) //avoid leading / if already in prepend
       {
        strcat(path,"/");
       }
@@ -241,7 +241,7 @@ void CardReader::getAbsFilename(char *t)
     while(*t!=0 && cnt< MAXPATHNAMELENGTH) 
     {t++;cnt++;}  //crawl counter forward.
   }
-  if(cnt<MAXPATHNAMELENGTH-FILENAME_LENGTH)
+  if(cnt<MAXPATHNAMELENGTH-13)
     file.getFilename(t);
   else
     t[0]=0;
@@ -311,7 +311,7 @@ void CardReader::openFile(char* name,bool read, bool replace_current/*=true*/)
       //SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
       if(dirname_end>0 && dirname_end>dirname_start)
       {
-        char subdirname[FILENAME_LENGTH];
+        char subdirname[13];
         strncpy(subdirname, dirname_start, dirname_end-dirname_start);
         subdirname[dirname_end-dirname_start]=0;
         SERIAL_ECHOLN(subdirname);
@@ -408,7 +408,7 @@ void CardReader::removeFile(char* name)
       //SERIAL_ECHO("end  :");SERIAL_ECHOLN((int)(dirname_end-name));
       if(dirname_end>0 && dirname_end>dirname_start)
       {
-        char subdirname[FILENAME_LENGTH];
+        char subdirname[13];
         strncpy(subdirname, dirname_start, dirname_end-dirname_start);
         subdirname[dirname_end-dirname_start]=0;
         SERIAL_ECHOLN(subdirname);
@@ -510,7 +510,7 @@ void CardReader::checkautostart(bool force)
   }
   
   char autoname[30];
-  sprintf_P(autoname, PSTR("auto%i.g"), autostart_index);
+  sprintf_P(autoname, PSTR("auto%i.g"), lastnr);
   for(int8_t i=0;i<(int8_t)strlen(autoname);i++)
     autoname[i]=tolower(autoname[i]);
   dir_t p;
@@ -532,14 +532,14 @@ void CardReader::checkautostart(bool force)
 
       sprintf_P(cmd, PSTR("M23 %s"), autoname);
       enquecommand(cmd);
-      enquecommands_P(PSTR("M24"));
+      enquecommand_P(PSTR("M24"));
       found=true;
     }
   }
   if(!found)
-    autostart_index=-1;
+    lastnr=-1;
   else
-    autostart_index++;
+    lastnr++;
 }
 
 void CardReader::closefile(bool store_location)
@@ -637,7 +637,7 @@ void CardReader::printingHasFinished()
       if(SD_FINISHED_STEPPERRELEASE)
       {
           //finishAndDisableSteppers();
-          enquecommands_P(PSTR(SD_FINISHED_RELEASECOMMAND));
+          enquecommand_P(PSTR(SD_FINISHED_RELEASECOMMAND));
       }
       autotempShutdown();
     }
