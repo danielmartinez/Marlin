@@ -335,7 +335,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
 // Travel limits after homing
 #define X_MAX_POS 200
-#define X_MIN_POS -61
+#define X_MIN_POS -67
 #define Y_MAX_POS 200
 #define Y_MIN_POS 0
 #define Z_MAX_POS 240
@@ -397,9 +397,9 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 
   // these are the offsets to the probe relative to the extruder tip (Hotend - Probe)
   // X and Y offsets must be integers
-  #define X_PROBE_OFFSET_FROM_EXTRUDER  61
+  #define X_PROBE_OFFSET_FROM_EXTRUDER  -X_MIN_POS
   #define Y_PROBE_OFFSET_FROM_EXTRUDER   0
-  #define Z_PROBE_OFFSET_FROM_EXTRUDER  -1
+  #define Z_PROBE_OFFSET_FROM_EXTRUDER  -2.90
 
   #define Z_RAISE_BEFORE_HOMING 4       // (in mm) Raise Z before homing (G28) for Probe Clearance.
                                         // Be sure you have this distance over your Z_MAX_POS in case
@@ -506,7 +506,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
 #ifdef CUSTOM_M_CODES
   #define CUSTOM_M_CODE_SET_Z_PROBE_OFFSET 851
   #define Z_PROBE_OFFSET_RANGE_MIN -15
-  #define Z_PROBE_OFFSET_RANGE_MAX -5
+  #define Z_PROBE_OFFSET_RANGE_MAX   0
 #endif
 
 
