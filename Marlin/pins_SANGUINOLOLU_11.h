@@ -16,7 +16,8 @@
 
 #define Z_STEP_PIN          3
 #define Z_DIR_PIN           2
-#define Z_STOP_PIN         20
+#define Z_STOP_PIN          20
+#define Z_MIN_PROBE_PIN     26
 
 #define E0_STEP_PIN         1
 #define E0_DIR_PIN          0
@@ -49,7 +50,7 @@
   #define HEATER_BED_PIN   12 // (bed)
   #define X_ENABLE_PIN     14
   #define Y_ENABLE_PIN     14
-  #define Z_ENABLE_PIN     26
+  #define Z_ENABLE_PIN     14 //26
   #define E0_ENABLE_PIN    14
 
   #if ENABLED(LCD_I2C_PANELOLU2)
@@ -129,8 +130,8 @@
   #endif // !DOGLCD
 
   //The encoder and click button
-  #define BTN_EN1               11
-  #define BTN_EN2               10
+  #define BTN_EN1               10
+  #define BTN_EN2               11
   #if ENABLED(LCD_I2C_PANELOLU2)
     #if MB(MELZI)
       #define BTN_ENC           29
